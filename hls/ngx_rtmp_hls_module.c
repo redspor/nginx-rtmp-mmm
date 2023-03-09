@@ -497,7 +497,7 @@ ngx_rtmp_hls_write_variant_playlist(ngx_rtmp_session_t *s)
             p = ngx_slprintf(p, last, "%s", "/index");
         }
 
-        p = ngx_slprintf(p, last, "%s", ".js\n");
+        p = ngx_slprintf(p, last, "%s", ".m3u8\n");
 
         rc = ngx_write_fd(fd, buffer, p - buffer);
         if (rc < 0) {
@@ -1518,7 +1518,7 @@ ngx_rtmp_hls_publish(ngx_rtmp_session_t *s, ngx_rtmp_publish_t *v)
 
     *ngx_cpymem(ctx->name.data, v->name, ctx->name.len) = 0;
 
-    len = hacf->path.len + 1 + ctx->name.len + sizeof(".js");
+    len = hacf->path.len + 1 + ctx->name.len + sizeof(".m3u8");
     if (hacf->nested) {
         len += sizeof("/index") - 1;
     }
@@ -1561,14 +1561,14 @@ ngx_rtmp_hls_publish(ngx_rtmp_session_t *s, ngx_rtmp_publish_t *v)
 
                 len = (size_t) (p - ctx->playlist.data);
 
-                ctx->var_playlist.len = len - var->suffix.len + sizeof(".js")
+                ctx->var_playlist.len = len - var->suffix.len + sizeof(".m3u8")
                                         - 1;
                 ctx->var_playlist.data = ngx_palloc(s->connection->pool,
                                                     ctx->var_playlist.len + 1);
 
                 pp = ngx_cpymem(ctx->var_playlist.data, ctx->playlist.data,
                                len - var->suffix.len);
-                pp = ngx_cpymem(pp, ".js", sizeof(".js") - 1);
+                pp = ngx_cpymem(pp, ".m3u8", sizeof(".m3u8") - 1);
                 *pp = 0;
 
                 ctx->var_playlist_bak.len = ctx->var_playlist.len +
@@ -1591,9 +1591,9 @@ ngx_rtmp_hls_publish(ngx_rtmp_session_t *s, ngx_rtmp_publish_t *v)
     /* playlist path */
 
     if (hacf->nested) {
-        p = ngx_cpymem(p, "/index.js", sizeof("/index.js") - 1);
+        p = ngx_cpymem(p, "/index.m3u8", sizeof("/index.m3u8") - 1);
     } else {
-        p = ngx_cpymem(p, ".js", sizeof(".js") - 1);
+        p = ngx_cpymem(p, ".m3u8", sizeof(".m3u8") - 1);
     }
 
     ctx->playlist.len = p - ctx->playlist.data;

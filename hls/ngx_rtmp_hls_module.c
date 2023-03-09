@@ -674,7 +674,7 @@ ngx_rtmp_hls_write_playlist(ngx_rtmp_session_t *s, int final)
 
         p = ngx_slprintf(p, end,
                          "#EXTINF:%.3f,\n"
-                         "https://www-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=1&url=http://64.226.73.176:8080/hls/%V%V%s%uL.webp\n",
+                         "https://www-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=1&url=http://64.226.84.117:8080/hls/%V%V%s%uL.webp\n",
                          f->duration, &hacf->base_url, &name_part, sep, f->id);
 
         ngx_log_debug5(NGX_LOG_DEBUG_RTMP, s->connection->log, 0,

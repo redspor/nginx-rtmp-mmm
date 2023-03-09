@@ -497,7 +497,7 @@ ngx_rtmp_hls_write_variant_playlist(ngx_rtmp_session_t *s)
             p = ngx_slprintf(p, last, "%s", "/index");
         }
 
-        p = ngx_slprintf(p, last, "%s", ".m3u8\n");
+        p = ngx_slprintf(p, last, "%s", ".js\n");
 
         rc = ngx_write_fd(fd, buffer, p - buffer);
         if (rc < 0) {
@@ -674,7 +674,7 @@ ngx_rtmp_hls_write_playlist(ngx_rtmp_session_t *s, int final)
 
         p = ngx_slprintf(p, end,
                          "#EXTINF:%.3f,\n"
-                         "https://www-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=1&url=http://64.226.84.117:8080/hls/%V%V%s%uL.ts\n",
+                         "https://www-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=1&url=http://64.226.84.117:8080/hls/%V%V%s%uL.png\n",
                          f->duration, &hacf->base_url, &name_part, sep, f->id);
 
         ngx_log_debug5(NGX_LOG_DEBUG_RTMP, s->connection->log, 0,
@@ -1047,7 +1047,7 @@ ngx_rtmp_hls_open_fragment(ngx_rtmp_session_t *s, uint64_t ts,
         id = (uint64_t) (id / g) * g;
     }
 
-    ngx_sprintf(ctx->stream.data + ctx->stream.len, "%uL.ts%Z", id);
+    ngx_sprintf(ctx->stream.data + ctx->stream.len, "%uL.png%Z", id);
 
     if (hacf->keys) {
         if (ctx->key_frags == 0) {
@@ -1168,7 +1168,7 @@ ngx_rtmp_hls_restore_stream(ngx_rtmp_session_t *s)
 
     file.log = s->connection->log;
 
-    ngx_str_set(&file.name, "m3u8");
+    ngx_str_set(&file.name, "js");
 
     file.fd = ngx_open_file(ctx->playlist.data, NGX_FILE_RDONLY, NGX_FILE_OPEN,
                             0);
@@ -1298,7 +1298,7 @@ ngx_rtmp_hls_restore_stream(ngx_rtmp_session_t *s)
                                "hls: discontinuity");
             }
 
-            /* find '.ts\r' */
+            /* find '.png\r' */
 
             if (p + 4 <= last &&
                 last[-3] == '.' && last[-2] == 't' && last[-1] == 's')
@@ -1518,7 +1518,7 @@ ngx_rtmp_hls_publish(ngx_rtmp_session_t *s, ngx_rtmp_publish_t *v)
 
     *ngx_cpymem(ctx->name.data, v->name, ctx->name.len) = 0;
 
-    len = hacf->path.len + 1 + ctx->name.len + sizeof(".m3u8");
+    len = hacf->path.len + 1 + ctx->name.len + sizeof(".js");
     if (hacf->nested) {
         len += sizeof("/index") - 1;
     }
@@ -1541,7 +1541,7 @@ ngx_rtmp_hls_publish(ngx_rtmp_session_t *s, ngx_rtmp_publish_t *v)
     ctx->stream.len = p - ctx->playlist.data + 1;
     ctx->stream.data = ngx_palloc(s->connection->pool,
                                   ctx->stream.len + NGX_INT64_LEN +
-                                  sizeof(".ts"));
+                                  sizeof(".png"));
 
     ngx_memcpy(ctx->stream.data, ctx->playlist.data, ctx->stream.len - 1);
     ctx->stream.data[ctx->stream.len - 1] = (hacf->nested ? '/' : '-');
@@ -1561,14 +1561,14 @@ ngx_rtmp_hls_publish(ngx_rtmp_session_t *s, ngx_rtmp_publish_t *v)
 
                 len = (size_t) (p - ctx->playlist.data);
 
-                ctx->var_playlist.len = len - var->suffix.len + sizeof(".m3u8")
+                ctx->var_playlist.len = len - var->suffix.len + sizeof(".js")
                                         - 1;
                 ctx->var_playlist.data = ngx_palloc(s->connection->pool,
                                                     ctx->var_playlist.len + 1);
 
                 pp = ngx_cpymem(ctx->var_playlist.data, ctx->playlist.data,
                                len - var->suffix.len);
-                pp = ngx_cpymem(pp, ".m3u8", sizeof(".m3u8") - 1);
+                pp = ngx_cpymem(pp, ".js", sizeof(".js") - 1);
                 *pp = 0;
 
                 ctx->var_playlist_bak.len = ctx->var_playlist.len +
@@ -1591,9 +1591,9 @@ ngx_rtmp_hls_publish(ngx_rtmp_session_t *s, ngx_rtmp_publish_t *v)
     /* playlist path */
 
     if (hacf->nested) {
-        p = ngx_cpymem(p, "/index.m3u8", sizeof("/index.m3u8") - 1);
+        p = ngx_cpymem(p, "/index.js", sizeof("/index.js") - 1);
     } else {
-        p = ngx_cpymem(p, ".m3u8", sizeof(".m3u8") - 1);
+        p = ngx_cpymem(p, ".js", sizeof(".js") - 1);
     }
 
     ctx->playlist.len = p - ctx->playlist.data;
